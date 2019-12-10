@@ -96,7 +96,7 @@ LRESULT WINAPI WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			}
 			break;
 		}
-		
+
 		break;
 
 	case WM_KEYDOWN:
@@ -178,20 +178,152 @@ bool initPixelFormat(HDC hdc)
 	}
 }
 //--------------------------------------------------------------------
+/*
+	Basic Shape
+*/
 
 void drawSphere() {
 	GLUquadricObj* var = gluNewQuadric();
 	gluQuadricDrawStyle(var, GLU_LINE);
-	gluCylinder(var, 0.3f, 0.3f, 0.5f, 16, 16);
+	gluSphere(var, 0.5f, 16, 16);
 	gluDeleteQuadric(var);
 }
+
+void drawCylinder() {
+	GLUquadricObj* var = gluNewQuadric();
+	gluQuadricDrawStyle(var, GLU_LINE);
+	gluCylinder(var, 0, 0.5f, 0.5f, 16, 16);
+	gluDeleteQuadric(var);
+}
+
+void drawPyramid() {
+	float points[5][3] = {
+		{ 0.5f, 0, 0.5f }, // A [0][]
+		{ -0.5f, 0, 0.5f }, // B [1][]
+		{ -0.5f, 0, -0.5f }, // C [2][]
+		{ 0.5f, 0, -0.5f }, // D [3][]
+		{ 0, 0.5f, 0 }, // E [4][]
+	};
+
+	glBegin(GL_QUADS);
+	{
+		// Bottom (ABCD)
+		glVertex3f(points[0][0], points[0][1], points[0][2]);
+		glVertex3f(points[1][0], points[1][1], points[1][2]);
+		glVertex3f(points[2][0], points[2][1], points[2][2]);
+		glVertex3f(points[3][0], points[3][1], points[3][2]);
+	}
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	{
+		// Left (BCE)
+		glVertex3f(points[1][0], points[1][1], points[1][2]);
+		glVertex3f(points[2][0], points[2][1], points[2][2]);
+		glVertex3f(points[4][0], points[4][1], points[4][2]);
+		
+	}
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	{
+		// Back (CDE)
+		glVertex3f(points[2][0], points[2][1], points[2][2]);
+		glVertex3f(points[3][0], points[3][1], points[3][2]);
+		glVertex3f(points[4][0], points[4][1], points[4][2]);
+		
+	}
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	{
+		// Right (DAE)
+		glVertex3f(points[3][0], points[3][1], points[3][2]);
+		glVertex3f(points[0][0], points[0][1], points[0][2]);
+		glVertex3f(points[4][0], points[4][1], points[4][2]);
+	}
+	glEnd();
+
+	glBegin(GL_TRIANGLES);
+	{
+		// Front (ABE)
+		glVertex3f(points[0][0], points[0][1], points[0][2]);
+		glVertex3f(points[1][0], points[1][1], points[1][2]);
+		glVertex3f(points[4][0], points[4][1], points[4][2]);
+	}
+	glEnd();
+}
+
+void drawCube() {
+	float points[8][3] = {
+		{ 0.5f, 0.5f, 0.5f }, // A [0][]
+		{ 0.5f, -0.5f, 0.5f }, // B [1][]
+		{ -0.5f, -0.5f, 0.5f }, // C [2][]
+		{ -0.5f, 0.5f, 0.5f }, // D [3][]
+		{ 0.5f, 0.5f, -0.5f }, // E [4][]
+		{ 0.5f, -0.5f, -0.5f }, // F [5][]
+		{ -0.5f, -0.5f, -0.5f }, // G [6][]
+		{ -0.5f, 0.5f, -0.5f }, // H [7][]
+	};
+	
+	glBegin(GL_QUADS);
+	{
+		// Front (ABCD)
+		glVertex3f(points[0][0], points[0][1], points[0][2]);
+		glVertex3f(points[1][0], points[1][1], points[1][2]);
+		glVertex3f(points[2][0], points[2][1], points[2][2]);
+		glVertex3f(points[3][0], points[3][1], points[3][2]);
+	
+		// Back (EFGH)
+		glVertex3f(points[4][0], points[4][1], points[4][2]);
+		glVertex3f(points[5][0], points[5][1], points[5][2]);
+		glVertex3f(points[6][0], points[6][1], points[6][2]);
+		glVertex3f(points[7][0], points[7][1], points[7][2]);
+	
+		// Left (CDHg)
+		glVertex3f(points[2][0], points[2][1], points[2][2]);
+		glVertex3f(points[3][0], points[3][1], points[3][2]);
+		glVertex3f(points[7][0], points[7][1], points[7][2]);
+		glVertex3f(points[6][0], points[6][1], points[6][2]);
+	
+		// Right (ABFE)
+		glVertex3f(points[0][0], points[0][1], points[0][2]);
+		glVertex3f(points[1][0], points[1][1], points[1][2]);
+		glVertex3f(points[5][0], points[5][1], points[5][2]);
+		glVertex3f(points[4][0], points[4][1], points[4][2]);
+	
+		// Top (ADHE)
+		glVertex3f(points[0][0], points[0][1], points[0][2]);
+		glVertex3f(points[3][0], points[3][1], points[3][2]);
+		glVertex3f(points[7][0], points[7][1], points[7][2]);
+		glVertex3f(points[4][0], points[4][1], points[4][2]);
+	
+		// Bottom (BCGF)
+		glVertex3f(points[1][0], points[1][1], points[1][2]);
+		glVertex3f(points[2][0], points[2][1], points[2][2]);
+		glVertex3f(points[6][0], points[6][1], points[6][2]);
+		glVertex3f(points[5][0], points[5][1], points[5][2]);
+	}
+	glEnd();
+}
+
+//--------------------------------------------------------------------
+/*
+	Construction
+*/
+
+
+
+//--------------------------------------------------------------------
 
 void display() {
 	glClearColor(0.18f, 0.04f, 0.14f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	drawSphere();
+	glPushMatrix();
+	drawPyramid();
+	glPopMatrix();
 }
 
 //--------------------------------------------------------------------
